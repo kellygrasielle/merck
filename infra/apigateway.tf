@@ -58,21 +58,13 @@ resource "aws_api_gateway_deployment" "drug_api" {
   rest_api_id = aws_api_gateway_rest_api.drug_api.id
 }
 
-resource "aws_api_gateway_stage" "dev" {
-  stage_name    = "development"
-  rest_api_id   = aws_api_gateway_rest_api.drug_api.id
-  deployment_id = aws_api_gateway_deployment.drug_api.id
 
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.apigw_logs.arn
-    format          = "$context.requestId: $context.status"
-  }
-  
-}
 
 resource "aws_cloudwatch_log_group" "apigw_logs" {
   name = "/aws/apigateway/drug_api"
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_lambda_permission" "apigw" {
   statement_id  = "AllowAPIGatewayInvoke"
@@ -82,14 +74,5 @@ resource "aws_lambda_permission" "apigw" {
   source_arn    = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.drug_api.id}/*/*/*"
 }
 
-resource "aws_api_gateway_method_settings" "all" {
-  rest_api_id = aws_api_gateway_rest_api.drug_api.id
-  stage_name  = aws_api_gateway_stage.dev.stage_name
-  method_path = "*/*"
-  settings {
-    logging_level      = "ERROR"
-    data_trace_enabled = true
-    metrics_enabled    = true
-  }
-}
+
 

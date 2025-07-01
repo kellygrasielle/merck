@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_exec" {
-  name = "lambda_exec_role"
+  name = "lambda_exec_role2"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -15,7 +15,7 @@ resource "aws_iam_role" "lambda_exec" {
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name = "lambda_dynamodb_policy"
+  name = "lambda_dynamodb_policy_drug"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
 }
 
 resource "aws_iam_role" "apigw_invoke_lambda" {
-  name = "apigw_invoke_lambda_role"
+  name = "apigw_invoke_lambda_role2"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -86,7 +86,16 @@ resource "aws_iam_role_policy" "apigw_invoke_lambda_policy" {
       {
         Effect = "Allow"
         Action = "lambda:InvokeFunction"
-        Resource = aws_lambda_function.drug_api.arn
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "*"
       }
     ]
   })
