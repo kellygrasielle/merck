@@ -1,6 +1,6 @@
 import json
-from db import get_all_records
-from upload import handle_upload
+from src.scripts.db import get_all_records
+from src.scripts.upload import handle_upload
 
 def lambda_handler(event, context):
     """

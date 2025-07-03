@@ -1,17 +1,18 @@
-import json
 import base64
-import csv
 import boto3
-import os
+import csv
+from src.scripts.db import save_records
+import json
 import logging
+import os
 import re
 from typing import Any, Dict
 from validation import validate_csv
-from db import save_records
+
 
 # Global resources (reuse across Lambda invocations)
 S3 = boto3.client('s3')
-BUCKET_NAME = os.environ.get('BUCKET', 'meu-bucket')
+BUCKET_NAME = os.environ.get('BUCKET_NAME')
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
@@ -67,7 +68,7 @@ def handle_upload(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         s3_key = f"uploads/upload_{context.aws_request_id}.csv"
         # Uncomment to save to S3
-        # S3.put_object(Bucket=BUCKET_NAME, Key=s3_key, Body=csv_bytes, ContentType='text/csv')
+        S3.put_object(Bucket=BUCKET_NAME, Key=s3_key, Body=csv_bytes, ContentType='text/csv')
 
         records = list(csv.DictReader(csv_text.splitlines()))
         validate_csv(records)

@@ -36,7 +36,7 @@ resource "aws_iam_policy" "lambda_policy" {
           "kms:GenerateDataKey",
           "kms:DescribeKey"
         ]
-        Resource = "arn:aws:kms:${var.region}:${var.account_id}:key/${var.s3_key}"
+        Resource = "${var.s3_key_arn}"
       },
       {
         Effect = "Allow"
